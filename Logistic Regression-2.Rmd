@@ -1,0 +1,66 @@
+---
+title: "Logistic Regression"
+output: html_document
+---
+
+
+# Load packages and data
+
+
+```{r}
+
+library(tidyverse)
+library(caret)
+library(tidymodels)
+library(broom)
+library(modelr)
+
+
+health_data <- read_csv("health_logistic-2.csv")
+health_predict <- read_csv("health_predict-2.csv")
+
+
+```
+
+
+
+# Fix our data for logistic regression before we work with it
+
+```{r}
+
+health_data <- health_data %>%
+  mutate(heart_attack_two = factor(heart_attack_two, levels = c("No", "Yes")))
+
+levels(health_data$heart_attack_two)
+
+```
+
+
+# Split our data
+
+```{r}
+
+set.seed(1)
+
+split <- initial_split(health_data, prop = 0.6)
+
+training_data <- training(split)
+testing_data <- testing(split)
+
+```
+
+
+# Create our model
+
+```{r}
+
+my_model <- train(heart_attack_two ~ cholesterol + age, data = training_data, method = "glm", family = "binomial")
+summary(my_model)
+
+my_model2 <- train(heart_attack_two ~., data = training_data, method = "glm", family = "binomial")
+summary(my_model2)
+
+#log(odds)
+
+```
+
